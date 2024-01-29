@@ -1,0 +1,227 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <!-- Required meta tags-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- Color theme for statusbar (Android only) -->
+    <meta name="theme-color" content="#2196f3">
+    <!-- Your app title -->
+    <title>My App</title>
+    <!-- Path to Framework7 Library Bundle CSS -->
+    <link rel="stylesheet" href="css/framework7-bundle.css">
+    <!-- Path to your custom app styles-->
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css">
+  </head>
+  <body>
+    <!-- App root element -->
+    <div id="app">
+
+      <!-- Your main view, should have "view-main" class -->
+      <div class="view view-main">
+        <!-- Initial Page, "data-name" contains page name -->
+        <div data-name="memorias" class="page">
+
+          <!-- Top Navbar -->
+          <div class="navbar border-bottom-primary">
+            <div class="navbar-bg bg-black"></div>
+            <div class="navbar-inner">
+                <a  href="#" class="back left padding-left txt-white"><i class="mdi mdi-arrow-left"></i></a>
+                <div class="title txt-white"><i class="mdi mdi-brain"></i> Memória</div>
+                <a  id="apagarMemoria"href="#" class="right padding-rigth txt-white"><i class="mdi mdi-database"></i></a>
+            </div>
+        </div>
+        <!-- SEARCHBAR-->
+        <div class="searchbar-backdrop"></div>
+        <form class="searchbar bg-black">
+          <div class="searchbar-inner">
+            <div class="searchbar-input-wrap">
+              <input type="search" class='input-search' placeholder="Procurar" />
+              <i class="searchbar-icon"></i>
+              <span class="input-clear-button"></span>
+            </div>
+            <span class="searchbar-disable-button">Cancel</span>
+          </div>
+        </form>
+ 
+        <!-- FAB BUTTON-->
+        <div class="fab fab-extended fab-center-bottom">
+          <a id="add" href="#" data-popup=".popup-pergunta"class="btn-sucess-outline popup-open">
+              
+            <div class="fab-text"><i class="mdi mdi-add"></i>Adicionar</div>
+          </a>
+        </div>
+
+        <!-- POPUP PERGUNTAS-->
+        <div class="popup popup-pergunta">
+          <div class="view">
+            <div class="page">
+              <div class="navbar">
+                <div class="navbar-bg bg-black"></div>
+                <div class="navbar-inner">
+                  <div class="title txt-white" >Nova pergunta</div>
+                  <div class="right">
+                    <!-- Link to close popup -->
+                    <a class="link popup-close"><i class="mdi mdi-close"></i></a>
+                  </div>
+                </div>
+              </div>
+              <div class="page-content bg-black">
+                <div class="list list-strong-ios list-dividers-ios inset-ios bg-black">
+                  <ul class="bg-black">
+                    <li class="item-content item-input">
+                      <div class="item-inner bg-black txt-white">
+                        <div class="item-title item-label txt-white bg-black" >Titulo da pergunta</div>
+                        <div class="item-input-wrap bg-black">
+                          <input id="perguntaEscrita" type="text" class="txt-white">
+                          <span class="input-clear-button  bg-black"></span>
+                        </div>
+                      </div>
+                    </li>
+                    <li class="item-content item-input bg-black">
+                      <div class="item-inner bg-black">
+                        <div class="item-title item-label">O que a Betha entendeu</div>
+                        <div class="item-input-wrap ">
+                          <input id="perguntaEntendida" type="text" class="txt-white">
+                          <span class="input-clear-button"></span>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- FAB BUTTON LEFT-->
+                <div class="fab fab-extended fab-left-bottom">
+                  <a href="#" data-popup=".popup-pergunta" class="btn-danger-outline popup-close">
+                    <div class="fab-text"><i class="mdi mdi-close"></i></div>
+                  </a>
+                </div>
+                <!-- FAB BUTTON CENTRALIZADO-->
+                <div class="fab fab-extended fab-center-bottom">
+                  <a id="gravarPergunta" href="#" data-popup=".popup-pergunta" class="btn-white-outline popup-open">
+                    <div class="fab-text"><i class="mdi mdi-microphone"></i></div>
+                  </a>
+                </div>
+                  <!-- FAB BUTTON RIGHT-->
+                  <div class="fab fab-extended fab-right-bottom">
+                  <a id="salvarPergunta" href="#" data-popup=".popup-pergunta" class="btn-sucess-outline">
+                    <div class="fab-text"><i class="mdi mdi-check-bold"></i></div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          ...
+        </div>
+        <!-- POPUP RESPOSTA-->
+        <div class="popup popup-resposta">
+          <div class="view">
+            <div class="page">
+              <div class="navbar">
+                <div class="navbar-bg bg-black"></div>
+                <div class="navbar-inner">
+                  <div class="title txt-white" >Resposta</div>
+                  <div class="right">
+                    <!-- Link to close popup -->
+                    <a class="link popup-close"><i class="mdi mdi-close"></i></a>
+                  </div>
+                </div>
+              </div>
+              <div class="page-content bg-black">
+                <div class="block">
+                  <span id="idItem" class="badge padding-left padding-right "></span>
+                </div>
+                
+                <div class="list list-strong-ios list-dividers-ios inset-ios bg-black">
+                  <ul class="bg-black">
+                    <li class="item-content item-input">
+                      <div class="item-inner bg-black txt-white">
+                        <div class="item-title item-label txt-white bg-black" >Resposta escrita</div>
+                        <div class="item-input-wrap bg-black">
+                          <input id="input_rescrita" type="text" class="txt-white">
+                          <span class="input-clear-button  bg-black"></span>
+                        </div>
+                      </div>
+                    </li>
+                    <li class="item-content item-input bg-black">
+                      <div class="item-inner bg-black">
+                        <div class="item-title item-label">Resposta falada</div>
+                        <div class="item-input-wrap ">
+                          <input id="input_rfalada" type="text" class="txt-white">
+                          <span class="input-clear-button"></span>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- FAB BUTTON LEFT-->
+                <div class="fab fab-extended fab-left-bottom">
+                  <a href="#" data-popup=".popup-resposta" class="btn-danger-outline popup-close">
+                    <div class="fab-text"><i class="mdi mdi-close"></i></div>
+                  </a>
+                </div>
+                <!-- FAB BUTTON CENTRALIZADO-->
+                <div class="fab fab-extended fab-center-bottom">
+                  <a href="#" id="BtnFalarResposta" data-popup=".popup-resposta" class="btn-white-outline popup-open">
+                    <div class="fab-text"><i class="mdi mdi-volume-high"></i></div>
+                  </a>
+                </div>
+                  <!-- FAB BUTTON RIGHT-->
+                  <div class="fab fab-extended fab-right-bottom">
+                  <a id="salvarRespostas" href="#" data-popup=".popup-resposta" class="btn-sucess-outline popup-open">
+                    <div class="fab-text"><i class="mdi mdi-check-bold"></i></div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          ...
+        </div>
+          <!-- Scrollable page content -->
+          <div class="page-content bg-black txt-primary">
+            <div id="semMemorias" class="display-none">
+              <div class="block-title txt-white">Nenhuma memória aprendida até o momento ...</div>
+            </div>
+
+            <div id="comMemorias" class="display-none">
+              <div class="block-title txt-white">Aprendidas (<b id='quantidade'></b>)</div>
+              <!-- caixinhas-->
+              <div id="listaPerguntas">
+
+              </div>  
+            </div>
+            
+
+          </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Path to Framework7 Library Bundle JS-->
+    <script type="text/javascript" src="js/lib/framework7-bundle.js"></script>
+    <!-- Typed js-->
+    <script type="text/javascript" src="js/lib/typed.js"></script>
+    <!-- Path to your app js-->
+    <script type="text/javascript" src="js/router.js"></script>
+    <script>
+        var typed = new Typed('#resposta', {
+        // Waits 1000ms after typing "First"
+        strings: ['Olá mundo!^1000', ''],
+        typeSpeed:40,
+        showCursor: false,
+        onComplete: function (self) {
+            toastBottom = app.toast.create({
+                text: 'Fala concluída.',
+                closeTimeout: 2000,
+            });
+            toastBottom.open();
+        }
+        });
+    </script>
+  </body>
+</html>
