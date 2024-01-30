@@ -6,6 +6,7 @@
     --sucess: green;
     --warning: gold;
     --danger:red;
+    --info: rgba(7, 139, 240, 0.923);
 }
 
 .bg-black {
@@ -40,16 +41,23 @@
 }
 
 .btn-sucess-outline {
-    background-color: var(--black) !important;
-    border: 1px solid var(--sucess);
-    color: var(--sucess) !important;
+    background-color: var(--sucess) !important;
+    border: none;
+    color: var(--white) !important;
+    border-radius: 50px !important;
+}
+
+.btn-info-outline {
+    background-color: var(--info) !important;
+    border: none;
+    color: var(--white) !important;
     border-radius: 50px !important;
 }
 
 .btn-danger-outline {
-    background-color: var(--black) !important;
-    border: 1px solid var(--danger);
-    color: var(--danger) !important;
+    background-color: var(--danger) !important;
+    border: none;
+    color: var(--white) !important;
     border-radius: 50px !important;
 }
 
@@ -101,4 +109,9 @@ li {
 
 #BtnFalar:active {
     background-color: rgb(128, 4, 0) !important;/* Cor quando pressionado (mousedown ou toque) */
+}
+
+#add i {
+    position:static !important;
+    font-size: larger;
 }

@@ -48,7 +48,7 @@ function escutando(){
                 TTS.speak({
                     text: 'Meu nome é Betha!',
                     locale: 'pt-BR',
-                    rate: 0.80
+                    rate: 1
                 }, function () {            
                     var typed = new Typed('#resposta', {
                         // Waits 1000ms after typing "First"
