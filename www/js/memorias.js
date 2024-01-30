@@ -1,21 +1,9 @@
-// INICIALIZAÇÃO DO SEACHBAR
-var searchbar = app.searchbar.create({
-    el: '.searchbar',
-    searchContainer: '.list',
-    searchIn: '.item-title',
-    on: {
-      search(sb, query, previousQuery) {
-        console.log(query, previousQuery);
-      }
-    }
-});
 
-$("#add").on("click", function(){
-    $("#perguntaEscrita").val("");
-    $("#perguntaEntendida").val("");
-});
-
-
+/***********************************************************************
+ *                           CRUD
+ *   Descrição: Todas funções de crud usadas nesse documento
+ *   
+ ***********************************************************************/
 
 /**
  * Cria o banco chamado "Banco" se não existir. Se existir, abre.
@@ -28,6 +16,7 @@ db.transaction(criarTabela,
   function(){
     console.log('Sucesso ao realizar transação Criar Tabela');
   }
+  
 );
 
 /**
@@ -36,7 +25,93 @@ db.transaction(criarTabela,
  */
 function criarTabela(tx){
   tx.executeSql("CREATE TABLE IF NOT EXISTS memorias (id INTEGER primary key,p_escrita varchar(255),p_falada varchar(255), r_escrita varchar(255), r_falada varchar(255))");
-}  
+}
+
+/**
+ * Apaga o banco todo
+ */
+function apagaBanco(){
+  db.transaction(apagaBanco,
+  function(err){
+    app.dialog.alert('Erro ao realizar Transação Apagar: '+err)
+  },
+  function(){
+    app.views.main.router.refreshPage();
+  })
+
+  function apagaBanco(tx){
+    tx.executeSql("DROP TABLE memorias",[],
+    function(){
+      app.dialog.alert('Quem sou eu? <br>Nada mais faz sentido...','<strong>Memória excluída.</strong>')
+    },
+    function(err){
+      app.dialog.alert('Falha ao apagar memórias: '+err)
+    })
+  }
+}
+
+/**
+ * Insere as perguntas na tabela
+ * @param {string} p_escrita 
+ * @param {string} p_falada 
+ */
+function inserirPerguntas(p_escrita, p_falada){
+  db.transaction(inserir,
+    function(err){
+      app.dialog.alert('Erro na transação Inserir: '+err)
+    },
+    function(){
+      app.popup.close('.popup-pergunta');
+      app.views.main.router.refreshPage();
+      tostSalvar();      
+    });
+
+    function inserir(tx) {
+      tx.executeSql(`INSERT INTO memorias (p_escrita, p_falada) VALUES ('${p_escrita}','${p_falada}')`);
+    }
+}
+
+/**
+ * Atualiza as respostas de acordo com o id passado
+ * @param {string} r_escrita 
+ * @param {string} r_falada 
+ * @param {string} id 
+ */
+function atualizarRespostas(r_escrita, r_falada, id){
+  db.transaction(atualizarTabela,
+    function(err){
+      app.dialog.alert('Erro ao realizar transação de Atualizar Tabela: '+err)
+    },
+    function(){
+      console.log("Sucesso ao realizar a transação de atualizar tabela")
+    });
+
+    function atualizarTabela(tx){
+      var sql = "UPDATE memorias SET r_escrita='"+r_escrita+"', r_falada='"+r_falada+"' WHERE id='"+id+"'  "
+      tx.executeSql(sql);
+
+    }
+}
+
+
+/**
+ * Apaga um registro da tabela de acordo com o id salvo em localStorage
+ */
+function deletarMemoria(){
+  db.transaction(deletar,
+    function(err){
+      app.dialog.alert("Erro ao deletar item: "+err)
+    },
+    function(){
+      console.log("Sucesso ao deletar item da tabela")
+      app.views.main.router.refreshPage();
+    });
+
+    function deletar(tx) {
+      var id = localStorage.getItem('idItem')
+      tx.executeSql("DELETE FROM memorias WHERE id='"+id+"'")
+    }
+}
 
 
 /**
@@ -60,9 +135,111 @@ function listarMemorias(){
     } 
 }
 
+/***********************************************************************
+ *                          DIVERSAS
+ *   Descrição: Todas funções diversas usadas nesse documento
+ *   
+ ***********************************************************************/
+
 /**
- * Função principal que lista tudo atualizado de acordo com as ações
+ * Função para asssistente falar
+ * @param {string} fala - Texto para ela falar
+ * @returns - Retorna som 
  */
+function assistenteFala(fala){
+  TTS.speak({
+    text: fala,
+    locale: 'pt-BR',
+    rate: 0.80
+  }, function () {            
+      console.log("Assistente falou!")
+  }, function (erro) {        
+      app.dialog.alert('Houve um erro: '+erro)
+  });
+}
+
+/**
+ * Modal de ação realizada com sucesso.
+ */
+function tostSalvar(){
+  toastSalvar = app.toast.create({
+    icon: '<i class="mdi mdi-content-save"></i>',
+    text: 'Salvo.',
+    position: 'center',
+    closeTimeout: 2000,
+  });
+  toastSalvar.open();
+}
+
+/***********************************************************************
+ *                              AÇÕES
+ *   Descrição: Todas ações realizadas através de algum evento
+ *   
+ ***********************************************************************/
+
+// gravar pergunta
+$("#gravarPergunta").on("click", function() {
+  let options = {
+    language:"pt-BR",
+    showPopup: false,
+    showPartial: true
+  }
+    
+  window.plugins.speechRecognition.startListening(
+  function(dados) {
+      $.each(dados, function(index,texto) {
+        $("#perguntaEntendida").val(texto);
+      })
+  },
+  function(erro) {
+      app.dialog.alert('Houve um erro: '+erro)
+  }, options)
+});
+
+// Salvar pergunta
+$("#salvarPergunta").on("click", function() {
+  var p_escrita = $("#perguntaEscrita").val();
+  var p_falada = $("#perguntaEntendida").val();
+
+  if(p_escrita == "" || p_falada == "") {
+    app.dialog.alert('Por favor, preencha todos os campos!');
+  } else {
+    inserirPerguntas(p_escrita, p_falada)
+  }
+});
+
+
+// Apagar memória
+$("#apagarMemoria").on("click", function(){
+  app.dialog.confirm('Quer mesmo apagar a memória?','<strong>Confirmação</strong>', function(){
+    apagaBanco();
+  })
+})
+
+// limpar inputs de perguntas
+$("#add").on("click", function(){
+  $("#perguntaEscrita").val("");
+  $("#perguntaEntendida").val("");
+});
+
+// searchbar
+var searchbar = app.searchbar.create({
+  el: '.searchbar',
+  searchContainer: '.list',
+  searchIn: '.item-title',
+  on: {
+    search(sb, query, previousQuery) {
+      console.log(query, previousQuery);
+    }
+  }
+});
+
+/***********************************************************************
+ *                         FUNÇÃO PRINCIPAL
+ *   Descrição: Lista todas as mémórias atualizadas na página de acordo
+ *              com as ações do usuário
+ *   
+ ***********************************************************************/
 function funcaoPrincipal(tx, dados){
   var linhas = dados.rows.length;
 
@@ -180,15 +357,7 @@ function funcaoPrincipal(tx, dados){
     //clicou no Ouvir
     $("#BtnFalarResposta").on('click', function(){
       var fala = $("#input_rfalada").val();
-      TTS.speak({
-        text: fala,
-        locale: 'pt-BR',
-        rate: 0.80
-    }, function () {            
-        console.log("Assistente falou!")
-    }, function (erro) {        
-        app.dialog.alert('Houve um erro: '+erro)
-    });
+      assistenteFala(fala)
     });
 
     $("#salvarRespostas").on("click", function(){
@@ -197,29 +366,15 @@ function funcaoPrincipal(tx, dados){
       var idElement =  document.getElementById('idItem');
       var id = idElement.textContent;
 
-      //app.dialog.alert(id);
+      atualizarRespostas(r_escrita, r_falada, id)
 
-      db.transaction(atualizarTabela,
-        function(err){
-          app.dialog.alert('Erro ao realizar transação de Atualizar Tabela: '+err)
-        },
-        function(){
-          console.log("Sucesso ao realizar a transação de atualizar tabela")
-        });
+      tostSalvar();
 
-        function atualizarTabela(tx){
-          var sql = "UPDATE memorias SET r_escrita='"+r_escrita+"', r_falada='"+r_falada+"' WHERE id='"+id+"'  "
-          tx.executeSql(sql);
+      $("#input_rescrita").val('');
+      $("#input_rfalada").val(''); 
 
-        }
-
-        tostSalvar();
-
-        $("#input_rescrita").val('');
-        $("#input_rfalada").val(''); 
-
-        app.popup.close('.popup-resposta');
-        app.views.main.router.refreshPage();
+      app.popup.close('.popup-resposta');
+      app.views.main.router.refreshPage();
     })
 
   }
@@ -229,100 +384,4 @@ function funcaoPrincipal(tx, dados){
 listarMemorias();
 
 
-// gravar pergunta
-$("#gravarPergunta").on("click", function() {
-  let options = {
-    language:"pt-BR",
-    showPopup: false,
-    showPartial: true
-  }
-    
-  //COMEÇOU A ESCUTAR
-  window.plugins.speechRecognition.startListening( //sucesso
-  function(dados) {
-      $.each(dados, function(index,texto) {
-        $("#perguntaEntendida").val(texto);
-      })
-  },
-  function(erro) {
-      app.dialog.alert('Houve um erro: '+erro)
-  }, options)
-});
-
-//salvar pergunta
-$("#salvarPergunta").on("click", function() {
-  var p_escrita = $("#perguntaEscrita").val();
-  var p_falada = $("#perguntaEntendida").val();
-
-  if(p_escrita == "" || p_falada == "") {
-    app.dialog.alert('Por favor, preencha todos os campos!');
-  } else {
-    inserirPerguntas(p_escrita, p_falada)
-  }
-});
-
-function inserirPerguntas(p_escrita, p_falada){
-  db.transaction(inserir,
-    function(err){
-      app.dialog.alert('Erro na transação Inserir: '+err)
-    },
-    function(){
-      app.popup.close('.popup-pergunta');
-      app.views.main.router.refreshPage();
-      tostSalvar();      
-    });
-
-    function inserir(tx) {
-      tx.executeSql(`INSERT INTO memorias (p_escrita, p_falada) VALUES ('${p_escrita}','${p_falada}')`);
-    }
-}
-
-// apagar memória
-$("#apagarMemoria").on("click", function(){
-  app.dialog.confirm('Quer mesmo apagar a memória?','<strong>Confirmação</strong>', function(){
-    db.transaction(apagaBanco,
-      function(err){
-        app.dialog.alert('Erro ao realizar Transação Apagar: '+err)
-      },
-      function(){
-        app.views.main.router.refreshPage();
-      })
-
-      function apagaBanco(tx){
-        tx.executeSql("DROP TABLE memorias",[],
-        function(){
-          app.dialog.alert('Quem sou eu? Nada mais faz sentido...<br>','<strong>Memória excluída.</strong>')
-        },
-        function(err){
-          app.dialog.alert('Falha ao apagar memórias: '+err)
-        })
-      }
-  })
-})
-
-function deletarMemoria(){
-  db.transaction(deletar,
-    function(err){
-      app.dialog.alert("Erro ao deletar item: "+err)
-    },
-    function(){
-      console.log("Sucesso ao deletar item da tabela")
-      app.views.main.router.refreshPage();
-    })
-}
-
-function deletar(tx) {
-  var id = localStorage.getItem('idItem')
-  tx.executeSql("DELETE FROM memorias WHERE id='"+id+"'")
-}
-
-function tostSalvar(){
-  toastSalvar = app.toast.create({
-    icon: '<i class="mdi mdi-content-save"></i>',
-    text: 'Salvo.',
-    position: 'center',
-    closeTimeout: 2000,
-  });
-  toastSalvar.open();
-}
 
