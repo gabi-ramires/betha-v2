@@ -1,5 +1,6 @@
 var ondaSonora = document.getElementById('ondaSonora')
 var btnFalar = document.getElementById('BtnFalar');
+var somTransicao = new Audio('../music/transicao.mp3');
 
 btnFalar.addEventListener('touchstart', escutando);
 btnFalar.addEventListener('touchend', parouDeEscutar);
@@ -39,6 +40,7 @@ function escutando(){
             var pergunta = $("#pergunta").html().toLowerCase();
 
             if(pergunta == "acessar memórias" || pergunta == "acessar memória"){
+                somTransicao.play();
                 app.views.main.router.navigate('/memorias/');
             }
 
@@ -97,7 +99,7 @@ function escutando(){
     },
     //erro
     function(erro) {
-        app.dialog.alert('Houve um erro: '+erro)
+        //app.dialog.alert('Houve um erro ao escutar: '+erro)
     }, options)
 
 };

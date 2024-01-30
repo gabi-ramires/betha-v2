@@ -93,24 +93,31 @@
                   </ul>
                 </div>
 
-                <!-- FAB BUTTON LEFT-->
+                <!-- FAB BUTTON FECHAR-->
                 <div class="fab fab-extended fab-left-bottom">
                   <a href="#" data-popup=".popup-pergunta" class="btn-danger-outline popup-close">
                     <div class="fab-text"><i class="mdi mdi-close"></i></div>
                   </a>
                 </div>
-                <!-- FAB BUTTON CENTRALIZADO-->
+                <!-- FAB BUTTON GRAVAR PERGUNTA-->
                 <div class="fab fab-extended fab-center-bottom">
                   <a id="gravarPergunta" href="#" data-popup=".popup-pergunta" class="btn-white-outline popup-open">
                     <div class="fab-text"><i class="mdi mdi-microphone"></i></div>
                   </a>
                 </div>
-                  <!-- FAB BUTTON RIGHT-->
-                  <div class="fab fab-extended fab-right-bottom">
+                <!-- FAB BUTTON SALVAR-->
+                <div id="fabSalvar" class="fab fab-extended fab-right-bottom">
                   <a id="salvarPergunta" href="#" data-popup=".popup-pergunta" class="btn-sucess-outline">
                     <div class="fab-text"><i class="mdi mdi-check-bold"></i></div>
                   </a>
                 </div>
+                <!-- FAB BUTTON ATUALIZAR -->
+                <div id="fabAtualizar" class="fab fab-extended fab-right-bottom display-none">
+                  <a id="atualizarPergunta" href="#" data-popup=".popup-pergunta" class="btn-info-outline">
+                    <div class="fab-text"><i class="mdi mdi-refresh"></i></div>
+                  </a>
+                </div>
+                
               </div>
             </div>
           </div>
@@ -132,7 +139,7 @@
               </div>
               <div class="page-content bg-black">
                 <div class="block">
-                  <span id="idItem" class="badge padding-left padding-right "></span>
+                  <span class="badge padding-left padding-right "> ID:<span id="idItem"></span></span>
                 </div>
                 
                 <div class="list list-strong-ios list-dividers-ios inset-ios bg-black">
@@ -172,7 +179,7 @@
                 </div>
                   <!-- FAB BUTTON RIGHT-->
                   <div class="fab fab-extended fab-right-bottom">
-                  <a id="salvarRespostas" href="#" data-popup=".popup-resposta" class="btn-sucess-outline popup-open">
+                  <a id="salvarRespostas" href="#" data-popup=".popup-resposta" class="btn-sucess-outline">
                     <div class="fab-text"><i class="mdi mdi-check-bold"></i></div>
                   </a>
                 </div>

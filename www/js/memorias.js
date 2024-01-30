@@ -88,6 +88,31 @@ function selecionarTudo(tx){
       }
 
       $(".list").on('click', function(){
+        $("#input_rescrita").val('');
+        $("#input_rfalada").val(''); 
+
+        var id = $(this).attr('data-id');
+        localStorage.setItem('idItem',idItem);
+        var perguntaEscrita = $(this).attr('data-pescrita');
+        var perguntaFalada = $(this).attr('data-pfalada');
+        var respostaEscrita = $(this).attr('data-rescrita');
+        var respostaFalada = $(this).attr('data-rfalada');
+
+        $("#idItem").html(" "+id)
+
+        if(respostaEscrita !== null && respostaEscrita !== "null" && respostaEscrita !== ""){
+          $("#input_rescrita").val(respostaEscrita);
+        }
+
+        if(respostaFalada !== null && respostaFalada !== "null" && respostaFalada !== ""){
+          $("#input_rfalada").val(respostaFalada);
+        }
+
+      });
+
+      // clicou e segurou o clique
+      $(".list").on('taphold', function(){
+       
         var id = $(this).attr('data-id');
         localStorage.setItem('idItem',id);
         var perguntaEscrita = $(this).attr('data-pescrita');
@@ -95,24 +120,45 @@ function selecionarTudo(tx){
         var respostaEscrita = $(this).attr('data-rescrita');
         var respostaFalada = $(this).attr('data-rfalada');
 
-        $("#idItem").html(" ID: "+id)
+        app.dialog.create({
+          title: 'OPÇÕES',
+          text: 'Escolha uma das opções abaixo:',
+          buttons: [
+            {
+              text: '<i class="mdi mdi-pencil"></i> Atualizar',
+              color: 'blue',
+              onClick: function(){
 
-        if(respostaEscrita !== null || respostaEscrita !== "null"){
-          $("#input_rescrita").var(respostaEscrita);
-        }
+              }
+            },
+            {
+              text: '<i class="mdi mdi-delete"></i> Deletar',
+              color: 'red',
+              onClick: function(){
+                app.dialog.confirm("Tem certeza que quer deletar a memória? <br><strong>ID: "+id+"</strong><br><strong>Pergunta: "+perguntaEscrita+"</strong>", 'CONFIRMAÇÃO',function(){
+                  deletarMemoria()
+                })
+              }
+            },
+            {
+              text: ' Cancelar',
+              color: 'black',
+              onClick: function(){
 
-        if(respostaFalada !== null || respostaFalada !== "null"){
-          $("#input_rfalada").var(respostaFalada);
-        }
+              }
+            }
+          ],
+          verticalButtons: true
+        }).open()
 
-        $("#input_rescrita").focus();
-
+        
       });
 
       // perdeu o foco, vai copiar resposta escrita para resposta falada
       $("#input_rescrita").on('blur', function(){
         $("#input_rfalada").val($("#input_rescrita").val());
       });
+
 
       //clicou no Ouvir
       $("#BtnFalarResposta").on('click', function(){
@@ -131,7 +177,10 @@ function selecionarTudo(tx){
       $("#salvarRespostas").on("click", function(){
         var r_escrita = $("#input_rescrita").val();
         var r_falada = $("#input_rfalada").val();
-        var id_res = localStorage.getItem('idItem');
+        var idElement =  document.getElementById('idItem');
+        var id = idElement.textContent;
+
+        //app.dialog.alert(id);
 
         db.transaction(atualizarTabela,
           function(err){
@@ -142,13 +191,18 @@ function selecionarTudo(tx){
           });
 
           function atualizarTabela(tx){
-            tx.executeSql("UPDATE memorias SET r_escrita='"+r_escrita+"', r_falada='"+r_falada+"' WHERE id='"+id_res+"'")
+            var sql = "UPDATE memorias SET r_escrita='"+r_escrita+"', r_falada='"+r_falada+"' WHERE id='"+id+"'  "
+            tx.executeSql(sql);
+
           }
 
-          toastSalvar();
+          tostSalvar();
+
           $("#input_rescrita").val('');
-          $("#input_rfalada").val('');
+          $("#input_rfalada").val(''); 
+
           app.popup.close('.popup-resposta');
+          app.views.main.router.refreshPage();
       })
 
     }
@@ -196,8 +250,8 @@ $("#salvarPergunta").on("click", function() {
       },
       function(){
         app.popup.close('.popup-pergunta');
-        listarMemorias();
-        toastSalvar();
+        app.views.main.router.refreshPage();
+        tostSalvar();
     
         
       })
@@ -223,7 +277,7 @@ $("#apagarMemoria").on("click", function(){
       function apagaBanco(tx){
         tx.executeSql("DROP TABLE memorias",[],
         function(){
-          app.dialog.alert('Quem sou eu? Nada mais faz sentido...','<strong>Memória excluída.</strong>')
+          app.dialog.alert('Quem sou eu? Nada mais faz sentido...<br>','<strong>Memória excluída.</strong>')
         },
         function(err){
           app.dialog.alert('Falha ao apagar memórias: '+err)
@@ -232,7 +286,23 @@ $("#apagarMemoria").on("click", function(){
   })
 })
 
-function toastSalvar(){
+function deletarMemoria(){
+  db.transaction(deletar,
+    function(err){
+      app.dialog.alert("Erro ao deletar item: "+err)
+    },
+    function(){
+      console.log("Sucesso ao deletar item da tabela")
+      app.views.main.router.refreshPage();
+    })
+}
+
+function deletar(tx) {
+  var id = localStorage.getItem('idItem')
+  tx.executeSql("DELETE FROM memorias WHERE id='"+id+"'")
+}
+
+function tostSalvar(){
   toastSalvar = app.toast.create({
     icon: '<i class="mdi mdi-content-save"></i>',
     text: 'Salvo.',
