@@ -11,8 +11,6 @@ var searchbar = app.searchbar.create({
 });
 
 $("#add").on("click", function(){
-  //$("#perguntaEscrita").focus();
-    // esvaziando os campos
     $("#perguntaEscrita").val("");
     $("#perguntaEntendida").val("");
 });

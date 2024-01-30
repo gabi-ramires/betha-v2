@@ -93,7 +93,7 @@ li {
 
 .item-title {
     color: var(--white) !important;
-    font-weight: 200;
+    font-weight: 300 !important;
     padding-left: 10px;
 }
 
