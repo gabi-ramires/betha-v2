@@ -24,7 +24,7 @@ db.transaction(criarTabela,
  * @param {*} tx 
  */
 function criarTabela(tx){
-  tx.executeSql("CREATE TABLE IF NOT EXISTS memorias (id INTEGER primary key,p_escrita varchar(255),p_falada varchar(255), r_escrita varchar(255), r_falada varchar(255))");
+  tx.executeSql("CREATE TABLE IF NOT EXISTS memorias (id INTEGER primary key,pergunta varchar(255),resposta varchar(255))");
 }
 
 /**
@@ -51,34 +51,34 @@ function apagaBanco(){
 }
 
 /**
- * Insere as perguntas na tabela
- * @param {string} p_escrita 
- * @param {string} p_falada 
+ * Insere a pergunta e a resposta na tabela
+ * @param {string} pergunta
+ * @param {string} resposta
  */
-function inserirPerguntas(p_escrita, p_falada){
-  db.transaction(inserir,
+function insereMemoria(pergunta, resposta){
+  db.transaction(insereMemoria,
     function(err){
       app.dialog.alert('Erro na transação Inserir: '+err)
     },
     function(){
-      app.popup.close('.popup-pergunta');
+      app.popup.close('.popup-memoria');
       app.views.main.router.refreshPage();
       tostSalvar();      
     });
 
-    function inserir(tx) {
-      tx.executeSql(`INSERT INTO memorias (p_escrita, p_falada) VALUES ('${p_escrita}','${p_falada}')`);
+    function insereMemoria(tx) {
+      tx.executeSql(`INSERT INTO memorias (pergunta, resposta) VALUES ('${pergunta}','${resposta}')`);
     }
 }
 
 /**
- * Atualiza as respostas de acordo com o id passado
- * @param {string} r_escrita 
- * @param {string} r_falada 
+ * Atualiza a memória
+ * @param {string} pergunta 
+ * @param {string} resposta
  * @param {string} id 
  */
-function atualizarRespostas(r_escrita, r_falada, id){
-  db.transaction(atualizarTabela,
+function atualizaMemoria(pergunta, resposta, id){
+  db.transaction(atualizaMemoria,
     function(err){
       app.dialog.alert('Erro ao realizar transação de Atualizar Tabela: '+err)
     },
@@ -86,19 +86,17 @@ function atualizarRespostas(r_escrita, r_falada, id){
       console.log("Sucesso ao realizar a transação de atualizar tabela")
     });
 
-    function atualizarTabela(tx){
-      var sql = "UPDATE memorias SET r_escrita='"+r_escrita+"', r_falada='"+r_falada+"' WHERE id='"+id+"'  "
+    function atualizaMemoria(tx){
+      var sql = "UPDATE memorias SET pergunta='"+pergunta+"', resposta='"+resposta+"' WHERE id='"+id+"'  "
       tx.executeSql(sql);
-
     }
 }
-
 
 /**
  * Apaga um registro da tabela de acordo com o id salvo em localStorage
  */
-function deletarMemoria(){
-  db.transaction(deletar,
+function deletaMemoria(){
+  db.transaction(deletaMemoria,
     function(err){
       app.dialog.alert("Erro ao deletar item: "+err)
     },
@@ -107,18 +105,17 @@ function deletarMemoria(){
       app.views.main.router.refreshPage();
     });
 
-    function deletar(tx) {
+    function deletaMemoria(tx) {
       var id = localStorage.getItem('idItem')
       tx.executeSql("DELETE FROM memorias WHERE id='"+id+"'")
     }
 }
 
-
 /**
  * Lista todas as memorias
  */
-function listarMemorias(){
-  db.transaction(selecionarTudo,
+function listaMemorias(){
+  db.transaction(listaMemorias,
     function(err){
       app.dialog.alert('Erro ao realizar transação Selecionar Tudo: '+err)
     },
@@ -126,7 +123,7 @@ function listarMemorias(){
       console.log('Sucesso ao realizar Transação Selecionar Tudo!')
     });
 
-    function selecionarTudo(tx){
+    function listaMemorias(tx){
       tx.executeSql('SELECT * FROM memorias ORDER BY id',[],
       funcaoPrincipal,
       function(err){
@@ -134,6 +131,11 @@ function listarMemorias(){
       })
     } 
 }
+
+
+
+/********************************************************************************************/
+
 
 /***********************************************************************
  *                          DIVERSAS
@@ -150,7 +152,7 @@ function assistenteFala(fala){
   TTS.speak({
     text: fala,
     locale: 'pt-BR',
-    rate: 0.80
+    rate: 1
   }, function () {            
       console.log("Assistente falou!")
   }, function (erro) {        
@@ -177,7 +179,7 @@ function tostSalvar(){
  *   
  ***********************************************************************/
 
-// gravar pergunta
+// Gravar Pergunta
 $("#gravarPergunta").on("click", function() {
   let options = {
     language:"pt-BR",
@@ -188,7 +190,7 @@ $("#gravarPergunta").on("click", function() {
   window.plugins.speechRecognition.startListening(
   function(dados) {
       $.each(dados, function(index,texto) {
-        $("#perguntaEntendida").val(texto);
+        $("#pergunta").val(texto);
       })
   },
   function(erro) {
@@ -196,16 +198,53 @@ $("#gravarPergunta").on("click", function() {
   }, options)
 });
 
-// Salvar pergunta
-$("#salvarPergunta").on("click", function() {
-  var p_escrita = $("#perguntaEscrita").val();
-  var p_falada = $("#perguntaEntendida").val();
+// Gravar Resposta
+$("#gravarResposta").on("click", function() {
+  let options = {
+    language:"pt-BR",
+    showPopup: false,
+    showPartial: true
+  }
+    
+  window.plugins.speechRecognition.startListening(
+  function(dados) {
+      $.each(dados, function(index,texto) {
+        $("#resposta").val(texto);
+      })
+  },
+  function(erro) {
+      app.dialog.alert('Houve um erro: '+erro)
+  }, options)
+});
 
-  if(p_escrita == "" || p_falada == "") {
+// Salvar memória
+$("#salvarMemoria").on("click", function() {
+  var pergunta = $("#pergunta").val();
+  var resposta = $("#resposta").val();
+
+  if(pergunta == "" || resposta == "") {
     app.dialog.alert('Por favor, preencha todos os campos!');
   } else {
-    inserirPerguntas(p_escrita, p_falada)
+    insereMemoria(pergunta, resposta)
   }
+});
+
+// Atualizar memória
+$("#atualizarMemoria").on("click", function() {
+  var pergunta = $("#pergunta").val();
+  var resposta = $("#resposta").val();
+  var id = localStorage.getItem('idItem');
+
+  atualizaMemoria(pergunta, resposta, id);
+
+  tostSalvar();
+
+  $("#pergunta").val('');
+  $("#resposta").val(''); 
+
+  app.popup.close('.popup-memoria');
+  app.views.main.router.refreshPage();
+  
 });
 
 
@@ -217,9 +256,9 @@ $("#apagarMemoria").on("click", function(){
 })
 
 // limpar inputs de perguntas
-$("#add").on("click", function(){
-  $("#perguntaEscrita").val("");
-  $("#perguntaEntendida").val("");
+$("#add2").on("click", function(){
+  $("#pergunta").val("");
+  $("#resposta").val("");
 });
 
 // searchbar
@@ -232,6 +271,18 @@ var searchbar = app.searchbar.create({
       console.log(query, previousQuery);
     }
   }
+});
+
+// Ouvir Pergunta
+$("#ouvirPergunta").on('click', function(){
+  var fala = $("#pergunta").val();
+  assistenteFala(fala)
+});
+
+// Ouvir Resposta
+$("#ouvirResposta").on('click', function(){
+  var fala = $("#resposta").val();
+  assistenteFala(fala)
 });
 
 /***********************************************************************
@@ -253,26 +304,34 @@ function funcaoPrincipal(tx, dados){
     $("#quantidade").html(linhas);
     $("#listaPerguntas").empty();
 
+    var banco = [];
+
     for (let i = 0; i < linhas; i++) {
+      // adicionando todos os dados num array
+      banco.push({
+        pergunta: dados.rows.item(i).pergunta,
+        resposta: dados.rows.item(i).resposta
+      })
+      // salvando no localStorage
+      localStorage.setItem('banco',JSON.stringify(banco));
+
       $("#listaPerguntas").append(`
       <div data-id="${dados.rows.item(i).id}"
-           data-pescrita="${dados.rows.item(i).p_escrita}"
-           data-pfalada="${dados.rows.item(i).p_falada}"
-           data-rescrita="${dados.rows.item(i).r_escrita}"
-           data-rfalada="${dados.rows.item(i).r_falada}"
+           data-pergunta="${dados.rows.item(i).pergunta}"
+           data-resposta="${dados.rows.item(i).resposta}"
            class="item-tela-memoria list media-list list-outline-ios list-strong-ios list-dividers-ios margin-left margin-right"
        >
         <ul>
           <li>
-            <a class="item-link item-content popup-open" data-popup=".popup-resposta">
+            <a class="item-link item-content popup-open" data-popup=".popup-memoria">
               <div class="item-inner">
                 <div class="item-title-row">
-                  <div class="item-title txt-white"><i class="mdi mdi-pencil"></i> ${dados.rows.item(i).p_escrita}</div>
+                  <div class="item-title txt-white"><i class="mdi mdi-pencil"></i> ${dados.rows.item(i).pergunta}</div>
                   <div class="item-after">
                     <span class="badge padding-left padding-right ">ID: ${dados.rows.item(i).id}</span>
                   </div>
                 </div>
-                <div class="item-title" txt-white><i class="mdi mdi-microphone"></i> ${dados.rows.item(i).p_falada}</div>
+                <div class="item-title" txt-white><i class="mdi mdi-microphone"></i> ${dados.rows.item(i).resposta}</div>
               </div>
             </a>
           </li>
@@ -282,25 +341,24 @@ function funcaoPrincipal(tx, dados){
     }
 
     $(".item-tela-memoria").on('click', function(){
-      $("#input_rescrita").val('');
-      $("#input_rfalada").val(''); 
-
       var id = $(this).attr('data-id');
-      localStorage.setItem('idItem',idItem);
-      var perguntaEscrita = $(this).attr('data-pescrita');
-      var perguntaFalada = $(this).attr('data-pfalada');
-      var respostaEscrita = $(this).attr('data-rescrita');
-      var respostaFalada = $(this).attr('data-rfalada');
+      localStorage.setItem('idItem',id);
 
-      $("#idItem").html(" "+id)
+      var pergunta = $(this).attr('data-pergunta');
+      var resposta = $(this).attr('data-resposta');
 
-      if(respostaEscrita !== null && respostaEscrita !== "null" && respostaEscrita !== ""){
-        $("#input_rescrita").val(respostaEscrita);
-      }
+      $("#fabSalvar").addClass('display-none');
+      $("#fabAtualizar").removeClass('display-none');
 
-      if(respostaFalada !== null && respostaFalada !== "null" && respostaFalada !== ""){
-        $("#input_rfalada").val(respostaFalada);
-      }
+      // alimentando os campos do popup
+      $("#pergunta").val(pergunta);
+      $("#resposta").val(resposta);
+
+      $("titulo-popup").val("Editar memória");
+
+      // abrir o pop de pergunta
+      app.popup.open('.popup-memoria');
+
 
     });
 
@@ -309,28 +367,19 @@ function funcaoPrincipal(tx, dados){
      
       var id = $(this).attr('data-id');
       localStorage.setItem('idItem',id);
-      var perguntaEscrita = $(this).attr('data-pescrita');
-      var perguntaFalada = $(this).attr('data-pfalada');
-      var respostaEscrita = $(this).attr('data-rescrita');
-      var respostaFalada = $(this).attr('data-rfalada');
+      var pergunta = $(this).attr('data-pergunta');
+      var resposta = $(this).attr('data-resposta');
 
       app.dialog.create({
         title: 'OPÇÕES',
         text: 'Escolha uma das opções abaixo:',
         buttons: [
           {
-            text: '<i class="mdi mdi-pencil"></i> Atualizar',
-            color: 'blue',
-            onClick: function(){
-
-            }
-          },
-          {
             text: '<i class="mdi mdi-delete"></i> Deletar',
             color: 'red',
             onClick: function(){
-              app.dialog.confirm("Tem certeza que quer deletar a memória? <br><strong>ID: "+id+"</strong><br><strong>Pergunta: "+perguntaEscrita+"</strong>", 'CONFIRMAÇÃO',function(){
-                deletarMemoria()
+              app.dialog.confirm("Tem certeza que quer deletar a memória? <br><strong>ID: "+id+"</strong><br><strong>Pergunta: "+pergunta+"<br>Resposta: "+resposta+"</strong>", 'CONFIRMAÇÃO',function(){
+                deletaMemoria()
               })
             }
           },
@@ -344,44 +393,15 @@ function funcaoPrincipal(tx, dados){
         ],
         verticalButtons: true
       }).open()
-
       
     });
 
-    // perdeu o foco, vai copiar resposta escrita para resposta falada
-    $("#input_rescrita").on('blur', function(){
-      $("#input_rfalada").val($("#input_rescrita").val());
-    });
-
-
-    //clicou no Ouvir
-    $("#BtnFalarResposta").on('click', function(){
-      var fala = $("#input_rfalada").val();
-      assistenteFala(fala)
-    });
-
-    $("#salvarRespostas").on("click", function(){
-      var r_escrita = $("#input_rescrita").val();
-      var r_falada = $("#input_rfalada").val();
-      var idElement =  document.getElementById('idItem');
-      var id = idElement.textContent;
-
-      atualizarRespostas(r_escrita, r_falada, id)
-
-      tostSalvar();
-
-      $("#input_rescrita").val('');
-      $("#input_rfalada").val(''); 
-
-      app.popup.close('.popup-resposta');
-      app.views.main.router.refreshPage();
-    })
 
   }
 
 }
 
-listarMemorias();
+listaMemorias();
 
 
 

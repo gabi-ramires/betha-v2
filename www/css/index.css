@@ -107,11 +107,30 @@ li {
     padding-left: 10px !important;
 }
 
+.item-input-wrap {
+    display: flex !important;
+
+}
+
 #BtnFalar:active {
     background-color: rgb(128, 4, 0) !important;/* Cor quando pressionado (mousedown ou toque) */
 }
 
-#add i {
+#add2 i {
     position:static !important;
     font-size: larger;
 }
+
+#perguntaEscrita, #perguntaEntendida, #input_rescrita, #input_rfalada {
+    padding-right: 30px;
+}
+
+.btn-microfone i {
+    background-color: var(--info);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    padding: 5px !important;
+    margin-right: 5px !important;
+}
+

@@ -9,7 +9,7 @@
     <!-- Color theme for statusbar (Android only) -->
     <meta name="theme-color" content="#2196f3">
     <!-- Your app title -->
-    <title>My App</title>
+    <title>Betha</title>
     <!-- Path to Framework7 Library Bundle CSS -->
     <link rel="stylesheet" href="css/framework7-bundle.css">
     <!-- Path to your custom app styles-->
@@ -29,7 +29,7 @@
           <div class="navbar border-bottom-primary">
             <div class="navbar-bg bg-black"></div>
             <div class="navbar-inner">
-                <a  href="#" class="back left padding-left txt-white"><i class="mdi mdi-arrow-left"></i></a>
+                <a  href="/index/" class="left padding-left txt-white"><i class="mdi mdi-arrow-left"></i></a>
                 <div class="title txt-white"><i class="mdi mdi-brain"></i> Memória</div>
                 <a  id="apagarMemoria"href="#" class="right padding-rigth txt-white"><i class="mdi mdi-database"></i></a>
             </div>
@@ -49,19 +49,19 @@
  
         <!-- FAB BUTTON-->
         <div class="fab fab-extended fab-center-bottom">
-          <a id="add" href="#" data-popup=".popup-pergunta"class="btn-sucess-outline popup-open">
+          <a id="add2" href="#" data-popup=".popup-memoria" class="btn-sucess-outline popup-open">
             <div class="fab-text"><i class="mdi mdi-plus"></i>ADICIONAR</div>
           </a>
         </div>
 
-        <!-- POPUP PERGUNTAS-->
-        <div class="popup popup-pergunta">
+        <!-- POPUP MEMÓRIA-->
+        <div class="popup popup-memoria">
           <div class="view">
             <div class="page">
               <div class="navbar">
                 <div class="navbar-bg bg-black"></div>
                 <div class="navbar-inner">
-                  <div class="title txt-white" >Nova pergunta</div>
+                  <div id="titulo-popup" class="title txt-white">Nova memória</div>
                   <div class="right">
                     <!-- Link to close popup -->
                     <a class="link popup-close"><i class="mdi mdi-close"></i></a>
@@ -73,18 +73,28 @@
                   <ul class="bg-black">
                     <li class="item-content item-input">
                       <div class="item-inner bg-black txt-white">
-                        <div class="item-title item-label txt-white bg-black" >Titulo da pergunta</div>
                         <div class="item-input-wrap bg-black">
-                          <input id="perguntaEscrita" type="text" class="txt-white">
-                          <span class="input-clear-button  bg-black"></span>
+                          <a id="gravarPergunta" href="#" data-popup=".popup-memoria" class="btn-microfone">
+                           <i class="mdi mdi-microphone"></i> 
+                          </a>
+                          <a id="ouvirPergunta" href="#" data-popup=".popup-memoria" class="btn-microfone">
+                            <i class="mdi mdi-play"></i> 
+                           </a>
+                          <input id="pergunta" type="text" class="txt-white" placeholder="Grave a pergunta">
+                          <span class="input-clear-button bg-black"></span>
                         </div>
                       </div>
                     </li>
                     <li class="item-content item-input bg-black">
                       <div class="item-inner bg-black">
-                        <div class="item-title item-label">O que a Betha entendeu</div>
                         <div class="item-input-wrap ">
-                          <input id="perguntaEntendida" type="text" class="txt-white">
+                          <a id="gravarResposta" href="#" data-popup=".popup-memoria" class="btn-microfone">
+                            <i class="mdi mdi-microphone"></i> 
+                           </a>
+                           <a id="ouvirResposta" href="#" data-popup=".popup-memoria" class="btn-microfone">
+                            <i class="mdi mdi-play"></i> 
+                           </a>
+                          <input id="resposta" type="text" class="txt-white" placeholder="Grave a resposta">
                           <span class="input-clear-button"></span>
                         </div>
                       </div>
@@ -94,94 +104,23 @@
 
                 <!-- FAB BUTTON FECHAR-->
                 <div class="fab fab-extended fab-left-bottom">
-                  <a href="#" data-popup=".popup-pergunta" class="btn-white-outline popup-close">
+                  <a href="#" data-popup=".popup-memoria" class="btn-white-outline popup-close">
                     <div class="fab-text"><i class="mdi mdi-close"></i></div>
-                  </a>
-                </div>
-                <!-- FAB BUTTON GRAVAR PERGUNTA-->
-                <div class="fab fab-extended fab-center-bottom">
-                  <a id="gravarPergunta" href="#" data-popup=".popup-pergunta" class="btn-info-outline popup-open">
-                    <div class="fab-text"><i class="mdi mdi-microphone"></i></div>
                   </a>
                 </div>
                 <!-- FAB BUTTON SALVAR-->
                 <div id="fabSalvar" class="fab fab-extended fab-right-bottom">
-                  <a id="salvarPergunta" href="#" data-popup=".popup-pergunta" class="btn-sucess-outline">
+                  <a id="salvarMemoria" href="#" data-popup=".popup-memoria" class="btn-sucess-outline">
                     <div class="fab-text"><i class="mdi mdi-check-bold"></i></div>
                   </a>
                 </div>
                 <!-- FAB BUTTON ATUALIZAR -->
                 <div id="fabAtualizar" class="fab fab-extended fab-right-bottom display-none">
-                  <a id="atualizarPergunta" href="#" data-popup=".popup-pergunta" class="btn-info-outline">
+                  <a id="atualizarMemoria" href="#" data-popup=".popup-memoria" class="btn-info-outline">
                     <div class="fab-text"><i class="mdi mdi-refresh"></i></div>
                   </a>
                 </div>
                 
-              </div>
-            </div>
-          </div>
-          ...
-        </div>
-        <!-- POPUP RESPOSTA-->
-        <div class="popup popup-resposta">
-          <div class="view">
-            <div class="page">
-              <div class="navbar">
-                <div class="navbar-bg bg-black"></div>
-                <div class="navbar-inner">
-                  <div class="title txt-white" >Resposta</div>
-                  <div class="right">
-                    <!-- Link to close popup -->
-                    <a class="link popup-close"><i class="mdi mdi-close"></i></a>
-                  </div>
-                </div>
-              </div>
-              <div class="page-content bg-black">
-                <div class="block">
-                  <span class="badge padding-left padding-right "> ID:<span id="idItem"></span></span>
-                </div>
-                
-                <div class="list list-strong-ios list-dividers-ios inset-ios bg-black">
-                  <ul class="bg-black">
-                    <li class="item-content item-input">
-                      <div class="item-inner bg-black txt-white">
-                        <div class="item-title item-label txt-white bg-black" >Resposta escrita</div>
-                        <div class="item-input-wrap bg-black">
-                          <input id="input_rescrita" type="text" class="txt-white">
-                          <span class="input-clear-button  bg-black"></span>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="item-content item-input bg-black">
-                      <div class="item-inner bg-black">
-                        <div class="item-title item-label">Resposta falada</div>
-                        <div class="item-input-wrap ">
-                          <input id="input_rfalada" type="text" class="txt-white">
-                          <span class="input-clear-button"></span>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-
-                <!-- FAB BUTTON FECHAR-->
-                <div class="fab fab-extended fab-left-bottom">
-                  <a href="#" data-popup=".popup-resposta" class="btn-white-outline popup-close">
-                    <div class="fab-text"><i class="mdi mdi-close"></i></div>
-                  </a>
-                </div>
-                <!-- FAB BUTTON OUVIR-->
-                <div class="fab fab-extended fab-center-bottom">
-                  <a href="#" id="BtnFalarResposta" data-popup=".popup-resposta" class="btn-info-outline popup-open">
-                    <div class="fab-text"><i class="mdi mdi-play"></i></div>
-                  </a>
-                </div>
-                  <!-- FAB BUTTON SALVAR RESPOSTA-->
-                  <div class="fab fab-extended fab-right-bottom">
-                  <a id="salvarRespostas" href="#" data-popup=".popup-resposta" class="btn-sucess-outline">
-                    <div class="fab-text"><i class="mdi mdi-check-bold"></i></div>
-                  </a>
-                </div>
               </div>
             </div>
           </div>
@@ -214,20 +153,5 @@
     <script type="text/javascript" src="js/lib/typed.js"></script>
     <!-- Path to your app js-->
     <script type="text/javascript" src="js/router.js"></script>
-    <script>
-        var typed = new Typed('#resposta', {
-        // Waits 1000ms after typing "First"
-        strings: ['Olá mundo!^1000', ''],
-        typeSpeed:40,
-        showCursor: false,
-        onComplete: function (self) {
-            toastBottom = app.toast.create({
-                text: 'Fala concluída.',
-                closeTimeout: 2000,
-            });
-            toastBottom.open();
-        }
-        });
-    </script>
   </body>
 </html>

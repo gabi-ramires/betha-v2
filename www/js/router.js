@@ -5,9 +5,9 @@ var app = new Framework7({
     // App root element
     el: '#app',
     // App Name
-    name: 'Betha V1',
+    name: 'Betha',
     // App id
-    id: 'br.com.betha.v1',
+    id: 'br.com.betha.v2',
     // Enable swipe panel
     panel: {
       swipe: true,
